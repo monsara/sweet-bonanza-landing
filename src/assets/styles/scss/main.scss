@@ -1,0 +1,35 @@
+@use "abstracts" as *;
+@use "base" as *;
+
+/* ======== */
+/* Main CSS */
+/* ======== */
+
+html,
+body,
+.promo,
+.wrapper {
+  height: auto;
+  min-height: 100dvh;
+}
+
+body {
+  position: relative;
+  background: #0b0b0b url("@/assets/images/img-bg-mobile.webp") center / cover no-repeat;
+
+  font-family: $font-family-stack;
+  font-weight: bold;
+
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  @include tablet-mf-em {
+    background-size: contain;
+  }
+}
+
+#app {
+  position: relative;
+  overflow: hidden;
+}

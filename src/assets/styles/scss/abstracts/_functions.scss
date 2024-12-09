@@ -1,0 +1,146 @@
+@use "sass:map";
+@use "sass:math";
+@use "variables" as *;
+
+// ================================== //
+// Access nested variable maps values //
+// ================================== //
+@function ss-var($variable, $keys...) {
+  $value: $variable;
+
+  @each $key in $keys {
+    $value: map-get($value, $key);
+  }
+
+  @return $value;
+}
+// ================================= //
+// String replace used for font face //
+// ================================= //
+@function str-replace($string, $search, $replace: "") {
+  $index: str-index($string, $search);
+
+  @if $index {
+    @return str-slice($string, 1, $index - 1) + $replace + str-replace(str-slice($string, $index + str-length($search)), $search, $replace);
+  }
+
+  @return $string;
+}
+// ========================= //
+// Strip units from a number //
+// ==========================//
+@function strip-unit($num) {
+  @return math.div($num, $num * 0 + 1);
+}
+// ================================================== //
+// Сonvert a value to rem units based on a base value //
+// ================================================== //
+@function px-to-rem($value, $base-value: $rem-base) {
+  $value: math.div(strip-unit($value), strip-unit($base-value)) * 1rem;
+  @if ($value == 0rem) {
+    $value: 0;
+  }
+  // Turn 0rem into 0
+  @return $value;
+}
+// ================================================== //
+// Сonvert a value to em units based on a base value //
+// ================================================== //
+@function px-to-em($value, $base-value: $rem-base) {
+  $value: math.div(strip-unit($value), strip-unit($base-value)) * 1em;
+  @if ($value == 0em) {
+    $value: 0;
+  }
+  // Turn 0em into 0
+  @return $value;
+}
+// =================================================== //
+// Сalculate multiple rem values from a list of values //
+// =================================================== //
+@function calc-rem($values, $base-value: $rem-base) {
+  $max: length($values);
+  @if $max == 1 {
+    @return px-to-rem(nth($values, 1), $base-value);
+  }
+  $remValues: ();
+  @for $i from 1 through $max {
+    $remValues: append($remValues, px-to-rem(nth($values, $i), $base-value));
+  }
+  @return $remValues;
+}
+// =================================================== //
+// Сalculate multiple em values from a list of values //
+// =================================================== //
+@function calc-em($values, $base-value: $rem-base) {
+  $max: length($values);
+  @if $max == 1 {
+    @return px-to-em(nth($values, 1), $base-value);
+  }
+  $emValues: ();
+  @for $i from 1 through $max {
+    $emValues: append($emValues, px-to-em(nth($values, $i), $base-value));
+  }
+  @return $emValues;
+}
+// =========================================== //
+// Calculate viewport width for target element //
+// =========================================== //
+@function to-vw($target-width, $design-width) {
+  $ratio: math.div($target-width, $design-width);
+  @return $ratio * 100vw;
+}
+
+// ============================================ //
+// Calculate viewport height for target element //
+// ============================================ //
+@function to-vh($target-height, $design-height) {
+  $ratio: math.div($target-height, $design-height);
+  @return $ratio * 100vh;
+}
+
+@function rel-width($target-width, $parent-width) {
+  @return math.div($target-width, $parent-width) * 100%;
+}
+
+// To set adaptive font size based on design dimensions
+@function calc-relative-rem($design-width, $design-height, $base-font-size: $rem-base) {
+  $vw-unit: math.div($design-width, 100);
+  $vh-unit: math.div($design-height, 100);
+
+  $scale: math.div($base-font-size, $vw-unit + $vh-unit);
+
+  @return calc(#{$scale}vw + #{$scale}vh);
+}
+
+@function calc-relative-vmin($design-width, $design-height, $base-font-size: $rem-base) {
+  $vmin-unit: math.div(min($design-width, $design-height), 100);
+  $scale: math.div($base-font-size, $vmin-unit);
+
+  @return calc(#{$scale}vmin);
+}
+
+@function to-vmin($image-width, $design-width) {
+  $ratio: math.div($image-width, $design-width);
+
+  @return $ratio * 100vmin;
+}
+
+@function to-vmax($image-width, $design-width) {
+  $ratio: math.div($image-width, $design-width);
+
+  @return $ratio * 100vmax;
+}
+// ================================================== //
+// Сonvert a value to em units based on a base value  //
+// ================================================== //
+@function convert-to-scw($pixels, $design-width) {
+  @if not unitless($pixels) and unit($pixels) == "px" {
+    @if not unitless($design-width) and unit($design-width) == "px" {
+      @return math.div($pixels, $design-width) * 100vw;
+    } @else {
+      @error "The design width #{$design-width} must be in pixels (px).";
+    }
+  } @else {
+    @error "The value #{$pixels} must be in pixels (px).";
+  }
+}

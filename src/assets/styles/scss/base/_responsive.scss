@@ -1,0 +1,25 @@
+// Abstracts
+@use "../abstracts/" as *;
+
+html,
+body {
+  $rem-base: 16px;
+
+  font-size: calc-relative-rem(390px, 844px, $rem-base);
+
+  @include tablet-mf-em {
+    font-size: calc-relative-rem(768px, 1024px, 16px);
+  }
+
+  @media (max-width: 844px) and (max-height: 390px) {
+    font-size: calc-relative-rem(844px, 390px, 16px);
+  }
+
+  @include laptop-mf-em {
+    font-size: calc-relative-rem(1024px, 768px, $rem-base);
+  }
+
+  @include desktop-mf-em {
+    font-size: clamp(10px, calc-relative-rem(1440px, 900px, $rem-base), $rem-base);
+  }
+}
