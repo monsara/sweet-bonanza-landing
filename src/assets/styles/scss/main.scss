@@ -33,3 +33,13 @@ body {
   position: relative;
   overflow: hidden;
 }
+
+/* Prevent scroll from ad iframes */
+iframe[src*="googlesyndication"],
+iframe[src*="safeframe"] {
+  position: fixed !important;
+  overflow: hidden !important;
+  max-width: 100vw !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
